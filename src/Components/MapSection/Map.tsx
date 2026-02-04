@@ -14,6 +14,15 @@ const icon = L.divIcon({
   iconAnchor: [16, 32],
 });
 
+const categoryIcon = L.divIcon({
+  html: renderToStaticMarkup(
+    <MapPin color="#dc2626" size={28} fill="#dc2626" fillOpacity={0.3} />
+  ),
+  className: 'bg-transparent',
+  iconSize: [28, 28],
+  iconAnchor: [14, 28],
+});
+
 const MapController: React.FC<{ center: [number, number]; zoom: number }> = ({
   center,
   zoom,
@@ -30,17 +39,13 @@ export type MapProps = {
   currZoomLevel: number;
 };
 
+type NearbyCategory = 'schools' | 'hospitals' | 'offices' | 'parks' | 'malls';
+
 export const Map: React.FC<MapProps> = ({ currCenterPos, currZoomLevel }) => {
   const [mapData, error, isLoading] = useFetchMapData();
 
-  React.useEffect(() => {
-    if (mapData) {
-      console.log(mapData);
-    }
-    if (error) {
-      console.error(error);
-    }
-  }, [mapData, error]);
+  const [activeCategory, setActiveCategory] =
+    React.useState<NearbyCategory | null>(null);
 
   if (isLoading) return <div>Loading map...</div>;
   if (error) return <div>Failed to load map data</div>;
@@ -57,19 +62,62 @@ export const Map: React.FC<MapProps> = ({ currCenterPos, currZoomLevel }) => {
         attribution="&copy; OpenStreetMap contributors &copy; CARTO"
         url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
       />
-      {mapData?.map((project) => (
-        <Marker
-          key={project.name}
-          position={[project.location.lat, project.location.lng]}
-          icon={icon}
-        >
-          <Popup>
-            <strong>{project.name}</strong>
-            <br />
-            Rating: {project.rating}
-          </Popup>
-        </Marker>
-      ))}
+      <div
+        style={{
+          position: 'absolute',
+          top: 16,
+          left: 16,
+          zIndex: 1000,
+          display: 'flex',
+          gap: 8,
+        }}
+      >
+        {(
+          [
+            'schools',
+            'hospitals',
+            'offices',
+            'parks',
+            'malls',
+          ] as NearbyCategory[]
+        ).map((category) => (
+          <button
+            key={category}
+            onClick={() =>
+              setActiveCategory(activeCategory === category ? null : category)
+            }
+            style={{
+              padding: '6px 10px',
+              borderRadius: 6,
+              border: '1px solid #ccc',
+              background: activeCategory === category ? '#2563eb' : 'white',
+              color: activeCategory === category ? 'white' : 'black',
+              cursor: 'pointer',
+            }}
+          >
+            {category}
+          </button>
+        ))}
+      </div>
+      {activeCategory &&
+        mapData?.flatMap(
+          (project) =>
+            project.nearby?.[activeCategory]?.items?.map((item) => (
+              <Marker
+                key={`${project.name}-${item.name}`}
+                position={[item.location.lat, item.location.lng]}
+                icon={categoryIcon}
+              >
+                <Popup>
+                  <strong>{item.name}</strong>
+                  <br />
+                  Rating: {item.rating}
+                  <br />
+                  {Math.round(item.distance_m)} m away
+                </Popup>
+              </Marker>
+            )) ?? []
+        )}
     </MapContainer>
   );
 };

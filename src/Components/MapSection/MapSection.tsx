@@ -1,8 +1,8 @@
-import * as React from "react";
-import { useFetchMapData } from "../../Hooks/useFetchMapData";
-import { CardList } from "../CardList/CardList";
-import type { PropertyCardProps } from "../PropCard/PropertyCard";
-import { Map } from "./Map";
+import * as React from 'react';
+import { useFetchMapData } from '../../Hooks/useFetchMapData';
+import { CardList } from '../CardList/CardList';
+import type { PropertyCardProps } from '../PropCard/PropertyCard';
+import { Map } from './Map';
 
 export const MapSection = () => {
   const [data, _error, isLoading] = useFetchMapData();
