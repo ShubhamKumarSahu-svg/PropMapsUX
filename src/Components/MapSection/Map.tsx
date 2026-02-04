@@ -5,7 +5,8 @@ import * as React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
 import { useFetchMapData } from '../../Hooks/useFetchMapData';
-const icon = L.divIcon({
+
+const projectIcon = L.divIcon({
   html: renderToStaticMarkup(
     <MapPin color="#2563eb" size={32} fill="#2563eb" fillOpacity={0.2} />
   ),
@@ -34,16 +35,15 @@ const MapController: React.FC<{ center: [number, number]; zoom: number }> = ({
   return null;
 };
 
+type NearbyCategory = 'schools' | 'hospitals' | 'offices' | 'parks' | 'malls';
+
 export type MapProps = {
   currCenterPos: [number, number];
   currZoomLevel: number;
 };
 
-type NearbyCategory = 'schools' | 'hospitals' | 'offices' | 'parks' | 'malls';
-
 export const Map: React.FC<MapProps> = ({ currCenterPos, currZoomLevel }) => {
   const [mapData, error, isLoading] = useFetchMapData();
-
   const [activeCategory, setActiveCategory] =
     React.useState<NearbyCategory | null>(null);
 
@@ -62,6 +62,21 @@ export const Map: React.FC<MapProps> = ({ currCenterPos, currZoomLevel }) => {
         attribution="&copy; OpenStreetMap contributors &copy; CARTO"
         url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
       />
+
+      {mapData?.map((project) => (
+        <Marker
+          key={project.name}
+          position={[project.location.lat, project.location.lng]}
+          icon={projectIcon}
+        >
+          <Popup>
+            <strong>{project.name}</strong>
+            <br />
+            Rating: {project.rating}
+          </Popup>
+        </Marker>
+      ))}
+
       <div
         style={{
           position: 'absolute',
@@ -99,6 +114,7 @@ export const Map: React.FC<MapProps> = ({ currCenterPos, currZoomLevel }) => {
           </button>
         ))}
       </div>
+
       {activeCategory &&
         mapData?.flatMap(
           (project) =>
