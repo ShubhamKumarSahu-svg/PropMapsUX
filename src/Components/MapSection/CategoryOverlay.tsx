@@ -16,34 +16,27 @@ export const CategoryOverlay = ({
   onSelect: (c: NearbyCategory | null) => void;
 }) => {
   return (
-    <div
-      style={{
-        position: 'absolute',
-        top: 16,
-        left: 16,
-        zIndex: 1000,
-        display: 'flex',
-        gap: 8,
-      }}
-    >
-      {CATEGORIES.map((category) => (
-        <button
-          key={category}
-          onClick={() =>
-            onSelect(activeCategory === category ? null : category)
-          }
-          style={{
-            padding: '6px 10px',
-            borderRadius: 6,
-            border: '1px solid #ccc',
-            background: activeCategory === category ? '#2563eb' : 'white',
-            color: activeCategory === category ? 'white' : 'black',
-            cursor: 'pointer',
-          }}
-        >
-          {category}
-        </button>
-      ))}
+    <div className="absolute top-4 left-4 z-[1000] flex gap-2">
+      {CATEGORIES.map((category) => {
+        const isActive = activeCategory === category;
+
+        return (
+          <button
+            key={category}
+            onClick={() => onSelect(isActive ? null : category)}
+            className={`
+              rounded-md border px-3 py-1.5 text-sm capitalize transition-colors
+              ${
+                isActive
+                  ? 'bg-blue-600 text-white border-blue-600'
+                  : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-100'
+              }
+            `}
+          >
+            {category}
+          </button>
+        );
+      })}
     </div>
   );
 };
