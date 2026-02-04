@@ -1,30 +1,10 @@
-import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { MapPin } from 'lucide-react';
 import * as React from 'react';
-import { renderToStaticMarkup } from 'react-dom/server';
 import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import { useFetchMapData } from '../../Hooks/useFetchMapData';
 import { CategoryOverlay } from './CategoryOverlay';
 import { MarkerRenderer } from './MarkerRenderer';
-
-const projectIcon = L.divIcon({
-  html: renderToStaticMarkup(
-    <MapPin color="#2563eb" size={32} fill="#2563eb" fillOpacity={0.2} />
-  ),
-  className: 'bg-transparent',
-  iconSize: [32, 32],
-  iconAnchor: [16, 32],
-});
-
-const categoryIcon = L.divIcon({
-  html: renderToStaticMarkup(
-    <MapPin color="#dc2626" size={28} fill="#dc2626" fillOpacity={0.3} />
-  ),
-  className: 'bg-transparent',
-  iconSize: [28, 28],
-  iconAnchor: [14, 28],
-});
+import { categoryIcons, projectIcon } from './mapIcons';
 
 const MapController = ({ center, zoom }: any) => {
   const map = useMap();
@@ -68,14 +48,13 @@ export const Map: React.FC<MapProps> = ({ currCenterPos, currZoomLevel }) => {
         activeCategory={activeCategory}
         onSelect={setActiveCategory}
       />
-
       {activeCategory &&
-        mapData.flatMap((project) =>
+        mapData?.flatMap((project) =>
           project.nearby?.[activeCategory]?.items ? (
             <MarkerRenderer
               key={project.name}
               items={project.nearby[activeCategory].items}
-              icon={categoryIcon}
+              icon={categoryIcons[activeCategory]}
               showDistance
               keyPrefix={`${project.name}-${activeCategory}`}
             />

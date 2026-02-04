@@ -1,3 +1,5 @@
+import { Button } from '../../../shadcn-ui/components/ui/button';
+
 type NearbyCategory = 'schools' | 'hospitals' | 'offices' | 'parks' | 'malls';
 
 const CATEGORIES: NearbyCategory[] = [
@@ -21,20 +23,15 @@ export const CategoryOverlay = ({
         const isActive = activeCategory === category;
 
         return (
-          <button
+          <Button
             key={category}
+            variant={isActive ? 'default' : 'outline'}
+            size="sm"
             onClick={() => onSelect(isActive ? null : category)}
-            className={`
-              rounded-md border px-3 py-1.5 text-sm capitalize transition-colors
-              ${
-                isActive
-                  ? 'bg-blue-600 text-white border-blue-600'
-                  : 'bg-white text-gray-900 border-gray-300 hover:bg-gray-100'
-              }
-            `}
+            className="capitalize"
           >
             {category}
-          </button>
+          </Button>
         );
       })}
     </div>
