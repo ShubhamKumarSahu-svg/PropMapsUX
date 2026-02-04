@@ -3,8 +3,10 @@ import 'leaflet/dist/leaflet.css';
 import { MapPin } from 'lucide-react';
 import * as React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import { useFetchMapData } from '../../Hooks/useFetchMapData';
+import { CategoryOverlay } from './CategoryOverlay';
+import { MarkerRenderer } from './MarkerRenderer';
 
 const projectIcon = L.divIcon({
   html: renderToStaticMarkup(
@@ -24,10 +26,7 @@ const categoryIcon = L.divIcon({
   iconAnchor: [14, 28],
 });
 
-const MapController: React.FC<{ center: [number, number]; zoom: number }> = ({
-  center,
-  zoom,
-}) => {
+const MapController = ({ center, zoom }: any) => {
   const map = useMap();
   React.useEffect(() => {
     map.flyTo(center, zoom);
@@ -63,76 +62,24 @@ export const Map: React.FC<MapProps> = ({ currCenterPos, currZoomLevel }) => {
         url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
       />
 
-      {mapData?.map((project) => (
-        <Marker
-          key={project.name}
-          position={[project.location.lat, project.location.lng]}
-          icon={projectIcon}
-        >
-          <Popup>
-            <strong>{project.name}</strong>
-            <br />
-            Rating: {project.rating}
-          </Popup>
-        </Marker>
-      ))}
+      <MarkerRenderer items={mapData} icon={projectIcon} keyPrefix="project" />
 
-      <div
-        style={{
-          position: 'absolute',
-          top: 16,
-          left: 16,
-          zIndex: 1000,
-          display: 'flex',
-          gap: 8,
-        }}
-      >
-        {(
-          [
-            'schools',
-            'hospitals',
-            'offices',
-            'parks',
-            'malls',
-          ] as NearbyCategory[]
-        ).map((category) => (
-          <button
-            key={category}
-            onClick={() =>
-              setActiveCategory(activeCategory === category ? null : category)
-            }
-            style={{
-              padding: '6px 10px',
-              borderRadius: 6,
-              border: '1px solid #ccc',
-              background: activeCategory === category ? '#2563eb' : 'white',
-              color: activeCategory === category ? 'white' : 'black',
-              cursor: 'pointer',
-            }}
-          >
-            {category}
-          </button>
-        ))}
-      </div>
+      <CategoryOverlay
+        activeCategory={activeCategory}
+        onSelect={setActiveCategory}
+      />
 
       {activeCategory &&
-        mapData?.flatMap(
-          (project) =>
-            project.nearby?.[activeCategory]?.items?.map((item) => (
-              <Marker
-                key={`${project.name}-${item.name}`}
-                position={[item.location.lat, item.location.lng]}
-                icon={categoryIcon}
-              >
-                <Popup>
-                  <strong>{item.name}</strong>
-                  <br />
-                  Rating: {item.rating}
-                  <br />
-                  {Math.round(item.distance_m)} m away
-                </Popup>
-              </Marker>
-            )) ?? []
+        mapData.flatMap((project) =>
+          project.nearby?.[activeCategory]?.items ? (
+            <MarkerRenderer
+              key={project.name}
+              items={project.nearby[activeCategory].items}
+              icon={categoryIcon}
+              showDistance
+              keyPrefix={`${project.name}-${activeCategory}`}
+            />
+          ) : null
         )}
     </MapContainer>
   );
