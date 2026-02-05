@@ -1,4 +1,5 @@
 import L from 'leaflet';
+import React from 'react';
 import { Marker, Popup } from 'react-leaflet';
 
 type Item = {
@@ -8,16 +9,18 @@ type Item = {
   location: { lat: number; lng: number };
 };
 
-export const MarkerRenderer = ({
-  items,
-  icon,
-  showDistance = false,
-  keyPrefix,
-}: {
+type MarkerRendererProps = {
   items: Item[];
   icon: L.DivIcon;
   showDistance?: boolean;
   keyPrefix: string;
+};
+
+export const MarkerRenderer: React.FC<MarkerRendererProps> = ({
+  items,
+  icon,
+  showDistance = false,
+  keyPrefix,
 }) => {
   return (
     <>
@@ -31,10 +34,10 @@ export const MarkerRenderer = ({
             <strong>{item.name}</strong>
             <br />
             Rating: {item.rating}
-            {showDistance && (
+            {showDistance && item.distance_m !== undefined && (
               <>
                 <br />
-                {Math.round(item.distance_m!)} m away
+                {Math.round(item.distance_m)} m away
               </>
             )}
           </Popup>
