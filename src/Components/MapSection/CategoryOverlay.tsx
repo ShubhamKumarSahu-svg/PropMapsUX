@@ -1,14 +1,8 @@
 import { Button } from '../../../shadcn-ui/components/ui/button';
-
-type NearbyCategory = 'schools' | 'hospitals' | 'offices' | 'parks' | 'malls';
-
-const CATEGORIES: NearbyCategory[] = [
-  'schools',
-  'hospitals',
-  'offices',
-  'parks',
-  'malls',
-];
+import {
+  NEARBY_CATEGORIES as CATEGORIES,
+  type NearbyCategory,
+} from '../types/maps';
 
 export const CategoryOverlay = ({
   activeCategory,
@@ -18,7 +12,7 @@ export const CategoryOverlay = ({
   onSelect: (c: NearbyCategory | null) => void;
 }) => {
   return (
-    <div className="absolute top-4 left-4 z-[1000] flex gap-2">
+    <div className="absolute top-4 left-4 z-1000 flex gap-2">
       {CATEGORIES.map((category) => {
         const isActive = activeCategory === category;
 

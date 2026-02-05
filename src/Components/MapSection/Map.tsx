@@ -1,11 +1,13 @@
+/*eslint-disable*/
+
 import 'leaflet/dist/leaflet.css';
 import * as React from 'react';
 import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import { useFetchMapData } from '../../Hooks/useFetchMapData';
+import type { NearbyCategory } from '../types/maps';
+import { categoryIcons, projectIcon } from '../ui/mapIcons';
 import { CategoryOverlay } from './CategoryOverlay';
 import { MarkerRenderer } from './MarkerRenderer';
-import { categoryIcons, projectIcon } from './mapIcons';
-
 const MapController = ({ center, zoom }: any) => {
   const map = useMap();
   React.useEffect(() => {
@@ -13,8 +15,6 @@ const MapController = ({ center, zoom }: any) => {
   }, [center, zoom, map]);
   return null;
 };
-
-type NearbyCategory = 'schools' | 'hospitals' | 'offices' | 'parks' | 'malls';
 
 export type MapProps = {
   currCenterPos: [number, number];
@@ -42,7 +42,11 @@ export const Map: React.FC<MapProps> = ({ currCenterPos, currZoomLevel }) => {
         url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
       />
 
-      <MarkerRenderer items={mapData} icon={projectIcon} keyPrefix="project" />
+      <MarkerRenderer
+        items={mapData ?? []}
+        icon={projectIcon}
+        keyPrefix="project"
+      />
 
       <CategoryOverlay
         activeCategory={activeCategory}

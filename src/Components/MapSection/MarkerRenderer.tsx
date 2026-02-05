@@ -21,28 +21,26 @@ export const MarkerRenderer: React.FC<MarkerRendererProps> = ({
   icon,
   showDistance = false,
   keyPrefix,
-}) => {
-  return (
-    <>
-      {items.map((item) => (
-        <Marker
-          key={`${keyPrefix}-${item.name}`}
-          position={[item.location.lat, item.location.lng]}
-          icon={icon}
-        >
-          <Popup>
-            <strong>{item.name}</strong>
-            <br />
-            Rating: {item.rating}
-            {showDistance && item.distance_m !== undefined && (
-              <>
-                <br />
-                {Math.round(item.distance_m)} m away
-              </>
-            )}
-          </Popup>
-        </Marker>
-      ))}
-    </>
-  );
-};
+}) => (
+  <>
+    {items.map((item) => (
+      <Marker
+        key={`${keyPrefix}-${item.name}`}
+        position={[item.location.lat, item.location.lng]}
+        icon={icon}
+      >
+        <Popup>
+          <strong>{item.name}</strong>
+          <br />
+          Rating: {item.rating}
+          {showDistance && item.distance_m !== undefined && (
+            <>
+              <br />
+              {Math.round(item.distance_m)} m away
+            </>
+          )}
+        </Popup>
+      </Marker>
+    ))}
+  </>
+);
