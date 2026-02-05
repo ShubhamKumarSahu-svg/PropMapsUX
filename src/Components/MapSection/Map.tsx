@@ -60,15 +60,17 @@ export const Map: React.FC<MapProps> = ({ currCenterPos, currZoomLevel }) => {
       />
       {activeCategory &&
         mapData?.flatMap((project) =>
-          project.nearby?.[activeCategory]?.items ? (
-            <MarkerRenderer
-              key={project.name}
-              items={project.nearby[activeCategory].items}
-              icon={categoryIcons[activeCategory]}
-              showDistance
-              keyPrefix={`${project.name}-${activeCategory}`}
-            />
-          ) : null
+          project.nearby?.[activeCategory]?.items
+            ? [
+                <MarkerRenderer
+                  key={project.name}
+                  items={project.nearby[activeCategory].items}
+                  icon={categoryIcon}
+                  showDistance
+                  keyPrefix={`${project.name}-${activeCategory}`}
+                />,
+              ]
+            : []
         )}
     </MapContainer>
   );
