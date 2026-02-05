@@ -8,7 +8,13 @@ import type { NearbyCategory } from '../types/maps';
 import { categoryIcons, projectIcon } from '../ui/mapIcons';
 import { CategoryOverlay } from './CategoryOverlay';
 import { MarkerRenderer } from './MarkerRenderer';
-const MapController = ({ center, zoom }: any) => {
+const MapController = ({
+  center,
+  zoom,
+}: {
+  center: [number, number];
+  zoom: number;
+}) => {
   const map = useMap();
   React.useEffect(() => {
     map.flyTo(center, zoom);
